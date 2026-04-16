@@ -1,21 +1,14 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
-import Homepage from "./pages/HomePage";
-import CreatePage from "./pages/CreatePage";
-import NoteDetailPage from "./pages/NoteDetailPage";
-import Card from "./components/Card";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import AuthPage from "./pages/AuthPage";
 
 const App = () => {
   return (
     <div>
-      <div>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/create" element={<CreatePage />} />
-          <Route path="/note/:id" element={<NoteDetailPage />} />
-          <Route path="/card" element={<Card />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<AuthPage />} />
+      </Routes>
     </div>
   );
 };
