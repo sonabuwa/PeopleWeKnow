@@ -1,43 +1,64 @@
 import express from "express";
-import Person from "../models/PersonSchema.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import Auth from "../models/AuthSchema.js";
 
 const router = express.Router();
 
-router.post("/people", async (req, res) => {
+//For - Signup
+const registerUser = async (req, res) => {
+  const { username, email, password } = req.body;
   try {
-    const person = await Person.create(req.body);
-    res.status(201).json(person);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+    const existingUser = await Auth.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "Email has already been used" });
+    }
+    //hashed password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new Auth({ username, email, password: hashedPassword });
+    await newUser.save();
 
-router.delete("/people/:id", async (req, res) => {
-  try {
-    const people = await Person.findByIdAndDelete(req.params.id);
-    res.status(204).send("People you know successfully get delected" + people);
-  } catch (error) {
-    console.error("There is a error" + error);
-  }
-});
+    console.log("My JWT Secret is:", process.env.JWT_SECRET);
 
-router.put("/people/:id", async (req, res) => {
-  try {
-    const update = await Person.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
+    //genrate token
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
     });
-    res.status(200).json(update);
-  } catch (error) {
-    console.error("The some error occuring while updating" + error);
-  }
-});
 
-router.get("/people", async (req, res) => {
-  try {
-    const people = await Person.find();
-    res.json(people);
+    res.status(201).json({ message: "User created successfully", token });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("🔥 SIGNUP CRASH ERROR:", error.message);
+    res.status(500).json({ message: "Server error" });
   }
-});
+};
+router.post("/signup", registerUser);
+
+//For - Login
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await Auth.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // ✅ USE BCRYPT.COMPARE INSTEAD OF !==
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.json({ token });
+  } catch (error) {
+    console.error("🔥 LOGIN CRASH ERROR:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+router.post("/login", loginUser);
 export default router;

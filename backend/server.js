@@ -9,10 +9,11 @@ dotenv.config();
 const app = express();
 connectDB();
 
-app.use(express.json()); // VERY IMPORTANT
+app.use(express.json()); // VERY IMPORTANT- middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5173", // Make sure this matches your React URL exactly
+    credentials: true,
   }),
 );
 
@@ -21,6 +22,6 @@ app.get("/", (_, res) => {
   return res.send("The server is Running...");
 });
 
-app.listen(process.env.PORT, () => {
-  console.log("Server running on the port" + process.env.PORT);
+app.listen(process.env.PORT || 5005, () => {
+  console.log("Server running on the port " + (process.env.PORT || 5005));
 });
