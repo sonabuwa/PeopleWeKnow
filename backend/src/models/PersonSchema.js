@@ -10,14 +10,22 @@ const PersonSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    whereIMet: {
+    place: {
       type: String,
+      required: true,
     },
-    AtWhichYear: {
+    year: {
       type: Number,
+      required: true,
     },
-    theirPersonality: {
+    traits: {
       type: String,
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Auth",
+      required: true,
     },
   },
   { timestamps: true },

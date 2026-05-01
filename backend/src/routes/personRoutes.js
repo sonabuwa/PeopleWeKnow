@@ -34,31 +34,42 @@ const registerUser = async (req, res) => {
 router.post("/signup", registerUser);
 
 //For - Login
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
+    // 1. Find the user by email
     const user = await Auth.findOne({ email });
 
+    // 2. If user doesn't exist, stop here
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // ✅ USE BCRYPT.COMPARE INSTEAD OF !==
+    // 3. Compare the plain text password with the hashed password in the database
     const isMatch = await bcrypt.compare(password, user.password);
 
+    // 4. If the password is wrong, stop here
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    // 5. ONLY IF THE PASSWORD IS CORRECT, generate the token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "30d",
     });
 
-    res.json({ token });
+    // 6. Send the token to the frontend
+    res.json({
+      message: "Login successful",
+      token: token,
+      user: { id: user._id, username: user.username },
+    });
   } catch (error) {
     console.error("🔥 LOGIN CRASH ERROR:", error.message);
     res.status(500).json({ message: "Server error" });
   }
 };
 router.post("/login", loginUser);
+
 export default router;

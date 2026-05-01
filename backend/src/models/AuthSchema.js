@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-// import bcrypt from "bcrypt"; // Uncomment this ONLY if you ran: npm install bcrypt
 
 const AuthSchema = new mongoose.Schema({
   username: {
@@ -22,16 +21,6 @@ const AuthSchema = new mongoose.Schema({
     type: Date,
   },
 });
-
-// ⚠️ THE HOOK MUST BE OUTSIDE THE SCHEMA OBJECT!
-// Leave this commented out for now so we can just get it working.
-/*
-AuthSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
-*/
 
 const Auth = mongoose.model("Auth", AuthSchema);
 export default Auth;

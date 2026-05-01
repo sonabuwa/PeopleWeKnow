@@ -67,9 +67,12 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-[#65C3C8] to-[#EF9FBC]/30">
-      <div>
-        <Link to="/" className="flex items-center justify-start">
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-[#65C3C8] to-[#EF9FBC]/30">
+      <div className="flex items-center justify-center mb-10 lg:absolute top-14 left-64 ">
+        <Link
+          to="/"
+          className="flex items-center gap-2 hover:opacity-70 transition-opacity"
+        >
           <FaLongArrowAltLeft /> Back To Home
         </Link>
       </div>
