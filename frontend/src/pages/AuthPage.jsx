@@ -32,13 +32,16 @@ const AuthPage = () => {
     //if isLoogedIn is true, we go to login. If false, we go to signup.
     const endpoint = isLoggedIn ? "/api/login" : "/api/signup";
     try {
-      const res = await fetch(`http://127.0.0.1:5005${endpoint}`, {
-        method: "POST", //Authentication data should always use POST
-        headers: {
-          "Content-Type": "application/json", // turns your state object into a string for travel
+      const res = await fetch(
+        `https://people-we-know-backend.onrender.com${endpoint}`,
+        {
+          method: "POST", //Authentication data should always use POST
+          headers: {
+            "Content-Type": "application/json", // turns your state object into a string for travel
+          },
+          body: JSON.stringify(form), //turn your state object into a string from travel
         },
-        body: JSON.stringify(form), //turn your state object into a string from travel
-      });
+      );
 
       const data = await res.json(); //paeses the server's response
       if (res.ok) {

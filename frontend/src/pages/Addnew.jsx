@@ -26,14 +26,17 @@ const Addnew = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5005/api/people`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `https://people-we-know-backend.onrender.com/api/people`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(personForm),
         },
-        body: JSON.stringify(personForm),
-      });
+      );
       if (res.ok) {
         setpersonForm({ name: "", emoji: "", place: "", year: "", traits: "" });
         toast.success("Person added successfully!");

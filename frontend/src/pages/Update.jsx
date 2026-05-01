@@ -19,9 +19,12 @@ const Update = () => {
     const fetchPerson = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5005/api/people/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          `https://people-we-know-backend.onrender.com/api/people/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
         const data = await res.json();
         setFormData(data); //pre-fill the form with existing data
       } catch (error) {
@@ -41,14 +44,17 @@ const Update = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5005/api/people/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `https://people-we-know-backend.onrender.com/api/people/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData), //send new data
         },
-        body: JSON.stringify(formData), //send new data
-      });
+      );
       if (res.ok) {
         //if successful send the user bback to the profile page
         navigate("/dashboard");

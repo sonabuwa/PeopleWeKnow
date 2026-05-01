@@ -10,15 +10,11 @@ const app = express();
 connectDB();
 
 app.use(express.json()); // VERY IMPORTANT- middleware
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Make sure this matches your React URL exactly
-    credentials: true,
-  }),
-);
+app.use(cors());
 
 app.use("/api", personRoutes);
 app.use("/api", People);
+
 app.get("/", (_, res) => {
   return res.send("The server is Running...");
 });

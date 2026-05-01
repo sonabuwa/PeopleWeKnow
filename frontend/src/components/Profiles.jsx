@@ -21,11 +21,14 @@ const Profile = () => {
 
         console.log("TOKEN BEING SENT TO SERVER:", token);
 
-        const res = await fetch("http://localhost:5005/api/people", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const res = await fetch(
+          "https://people-we-know-backend.onrender.com/api/people",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         // If the token is bad, go back to login
         if (!res.ok) {
@@ -53,12 +56,15 @@ const Profile = () => {
     if (!window.confirm("Are you sure you want to delete this person?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5005/api/people/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `https://people-we-know-backend.onrender.com/api/people/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       if (res.ok) {
         setPeople((prevPeople) =>
