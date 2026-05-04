@@ -23,7 +23,7 @@ const Update = () => {
     const fetchPerson = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5005/api/people/${id}`, {
+        const res = await fetch(`https://people-we-know.onrender.com/api/people/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -69,7 +69,7 @@ const Update = () => {
         dataToSend.append("photo", newPhoto);
       }
 
-      const res = await fetch(`http://localhost:5005/api/people/${id}`, {
+      const res = await fetch(`https://people-we-know.onrender.com/api/people/${id}`, {
         method: "PUT",
         headers: {
           // ⚠️ NO "Content-Type": "application/json" allowed here!
@@ -110,7 +110,7 @@ const Update = () => {
             <div className="avatar">
               <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                 <img
-                  src={`http://localhost:5005/${formData.photo.replace(/\\/g, "/")}`}
+                  src={`https://people-we-know.onrender.com/${formData.photo.replace(/\\/g, "/")}`}
                   alt="Current"
                 />
               </div>
