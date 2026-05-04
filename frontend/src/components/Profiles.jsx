@@ -4,7 +4,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { FiEdit } from "react-icons/fi";
 
 const Profile = () => {
-  const [people, setPeople] = useState([]); // Always starts as an empty array
+  const [people, setPeople] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -12,34 +12,18 @@ const Profile = () => {
     const fetchPeople = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        // If there is no token, go back to login
         if (!token) {
           navigate("/login");
           return;
         }
-
-        console.log("TOKEN BEING SENT TO SERVER:", token);
-
-        const res = await fetch(
-          "https://people-we-know-backend.onrender.com/api/people",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        // If the token is bad, go back to login
+        const res = await fetch("http://localhost:5005/api/people", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!res.ok) {
-          if (res.status === 401) {
-            localStorage.removeItem("token");
-          }
+          if (res.status === 401) localStorage.removeItem("token");
           navigate("/login");
-          return; // Stop right here, don't read the JSON
+          return;
         }
-
-        // If we get here, data is guaranteed to be an array
         const data = await res.json();
         setPeople(data);
       } catch (error) {
@@ -48,7 +32,6 @@ const Profile = () => {
         setIsLoading(false);
       }
     };
-
     fetchPeople();
   }, [navigate]);
 
@@ -56,16 +39,10 @@ const Profile = () => {
     if (!window.confirm("Are you sure you want to delete this person?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `https://people-we-know-backend.onrender.com/api/people/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
+      const res = await fetch(`http://localhost:5005/api/people/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (res.ok) {
         setPeople((prevPeople) =>
           prevPeople.filter((person) => person._id !== id),
@@ -85,8 +62,16 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#F0FDFA] p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+    <div
+      className="min-h-screen w-full p-8 bg-white"
+      style={{
+        backgroundImage:
+          "repeating-linear-gradient(transparent, transparent 31px, #cbd5e1 31px, #cbd5e1 32px)",
+        backgroundSize: "100% 32px",
+      }}
+    >
+      {/* ✅ 1. Changed gap-8 to gap-y-16 gap-x-8 to stop photos from touching cards below */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-16 gap-x-8 max-w-7xl mx-auto pt-4">
         {people.length === 0 ? (
           <p className="text-center text-2xl text-gray-500 col-span-full mt-20">
             No People yet...
@@ -95,34 +80,77 @@ const Profile = () => {
           people.map((person) => (
             <div
               key={person._id}
-              className="card bg-base-100 shadow-xl border border-white/50 hover:shadow-2xl transition-shadow duration-300"
+              className="group relative border-2 border-dashed border-gray-500 rounded-xl bg-white/80 backdrop-blur-sm p-6 pt-16 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col"
             >
-              <div className="card-body items-center text-center">
-                <h2 className="card-title text-2xl">
-                  {person.name}
-                  <span className="animate-spin">{person.emoji}</span>
-                </h2>
-                <div className="divider -scroll-my-0"></div>
-                <div className="w-full text-left space-y-1 ">
-                  <p>
-                    <span className="font-semibold text-primary">Place:</span>{" "}
-                    {person.place}
-                  </p>
-                  <p>
-                    <span className="font-semibold text-primary"> Year:</span>{" "}
-                    {person.year}
-                  </p>
-                  <p>
-                    <span className="font-semibold text-primary">Traits:</span>{" "}
-                    {person.traits}
-                  </p>
-                </div>
+              {/* Image sitting ON the border */}
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full border-2  border-black bg-white z-10 overflow-hidden flex items-center justify-center">
+                {person.photo ? (
+                  <img
+                    src={`http://localhost:5005/${person.photo.replace(/\\/g, "/")}`}
+                    alt={person.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-400 text-sm font-medium">img</span>
+                )}
               </div>
-              <div className="flex items-end justify-end px-6 py-2 space-x-2 cursor-pointer text-2xl">
-                <Link to={`/update/${person._id}`}>
-                  <FiEdit />
+
+              {/* ✅ 2. Changed justify-end to justify-center and added gap-2 */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <h2 className="text-xl font-bold text-gray-800 leading-tight">
+                  {person.name}
+                </h2>
+                <span className="text-2xl animate-bounce bg-red-200 rounded-full p-2">
+                  {person.emoji}
+                </span>
+              </div>
+
+              {/* Divider */}
+              <div className="border-b-2 border-dashed border-gray-400 mb-4"></div>
+
+              {/* Details */}
+              <div className="flex-grow space-y-2 text-gray-700 font-medium">
+                <p>
+                  place :{" "}
+                  <span className="text-gray-900 font-normal ml-1">
+                    {person.place}
+                  </span>
+                </p>
+                <p>
+                  year :{" "}
+                  <span className="text-gray-900 font-normal ml-1">
+                    {person.year}
+                  </span>
+                </p>
+                <p>
+                  personality :{" "}
+                  <span className="text-gray-900 font-normal ml-1">
+                    {person.traits}
+                  </span>
+                </p>
+              </div>
+
+              {/* Bottom Doodles */}
+              <div className="flex justify-center gap-3 mt-6 text-gray-400 select-none">
+                <span>✨</span>
+                <span>🎈</span>
+                <span>✨</span>
+              </div>
+
+              {/* Hover Buttons */}
+              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 rounded-lg p-1 shadow-sm">
+                <Link
+                  to={`/update/${person._id}`}
+                  className="text-gray-600 hover:text-primary"
+                >
+                  <FiEdit size={18} />
                 </Link>
-                <RiDeleteBin6Line onClick={() => handleDelete(person._id)} />
+                <button
+                  onClick={() => handleDelete(person._id)}
+                  className="text-gray-600 hover:text-red-500"
+                >
+                  <RiDeleteBin6Line size={18} />
+                </button>
               </div>
             </div>
           ))

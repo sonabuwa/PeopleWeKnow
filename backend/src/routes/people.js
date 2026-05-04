@@ -1,14 +1,21 @@
 import express from "express";
 import Person from "../models/PersonSchema.js";
 import { authenticate } from "../middleware/authMiddleware.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
 router.use(authenticate);
 
-router.post("/people", async (req, res) => {
+router.post("/people", upload.single("photo"), async (req, res) => {
   const { name } = req.body;
   try {
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Photo is required" });
+    }
+
     //check duplicate only for this specific user
     const existingPerson = await Person.findOne({
       name: name,
@@ -20,8 +27,11 @@ router.post("/people", async (req, res) => {
         message: `"${name}" already exists in your list.`,
       });
     }
-    //attach the logged-in user's id to the new person
-    const newPerson = await Person.create({ ...req.body, userId: req.userId });
+    const newPerson = await Person.create({
+      ...req.body,
+      photo: req.file.path,
+      userId: req.userId,
+    });
     res.status(201).json({
       success: true,
       message: "Person successfully created!",
@@ -79,11 +89,15 @@ router.get("/people/:id", async (req, res) => {
 });
 
 //update only if it belongs to this user
-router.put("/people/:id", async (req, res) => {
+router.put("/people/:id", upload.single("photo"), async (req, res) => {
   try {
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.photo = req.file.path;
+    }
     const updatePerson = await Person.findOneAndUpdate(
       { _id: req.params.id, userId: req.userId },
-      req.body,
+      updateData,
       { new: true },
     );
     if (!updatePerson)

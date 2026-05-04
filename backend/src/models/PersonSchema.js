@@ -10,6 +10,10 @@ const PersonSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    photo: {
+      type: String,
+      required: true,
+    },
     place: {
       type: String,
       required: true,
