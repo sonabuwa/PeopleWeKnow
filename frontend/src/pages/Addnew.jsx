@@ -55,7 +55,7 @@ const Addnew = () => {
         formData.append("photo", personForm.photo);
       }
 
-      const res = await fetch(`http://localhost:5005/api/people`, {
+      const res = await fetch(`https://people-we-know.onrender.com/api/people`, {
         method: "POST",
         headers: {
           // ⚠️ CRITICAL: Do NOT set 'Content-Type': 'application/json' here!
