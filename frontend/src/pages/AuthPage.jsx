@@ -25,44 +25,39 @@ const AuthPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); //stops the browser from refreshing the page
-    setError(""); // clears any previous error messages
-    setLoading(true); // starts a loading spinner or disables the button
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    //if isLoogedIn is true, we go to login. If false, we go to signup.
     const endpoint = isLoggedIn ? "/api/login" : "/api/signup";
     try {
-      const res = await fetch(`http://127.0.0.1:5005${endpoint}`, {
-        method: "POST", //Authentication data should always use POST
+      // ✅ Updated to Render URL
+      const res = await fetch(`https://people-we-know.onrender.com${endpoint}`, {
+        method: "POST",
         headers: {
-          "Content-Type": "application/json", // turns your state object into a string for travel
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(form), //turn your state object into a string from travel
+        body: JSON.stringify(form),
       });
 
-      const data = await res.json(); //paeses the server's response
+      const data = await res.json();
       if (res.ok) {
         if (isLoggedIn) {
           localStorage.setItem("token", data.token);
           navigate("/dashboard");
         } else {
-          // Don't save token yet, don't navigate to dashboard
-          // Just switch the form to Login mode
           setIsLoggedIn(true);
-          //optional: clear the form
           setForm({ username: "", email: "", password: "" });
-          //optional: show a sucess message
           setError("");
           toast.success("Account created! Please log in.");
         }
       } else {
-        //if the server says "User alredy exists" or "wrong password"
         setError(data.message || "Something went wrong");
       }
     } catch (error) {
       setError("Server is unreachable. Please try again later" + error);
     } finally {
-      setLoading(false); // Stop the loading spinner regardless of success or failure
+      setLoading(false);
     }
   };
 
