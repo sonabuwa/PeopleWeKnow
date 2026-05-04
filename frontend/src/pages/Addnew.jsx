@@ -93,7 +93,7 @@ const Addnew = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-[#65C3C8] to-[#EF9FBC]/30">
-      <div className="absolute top-14 left-64">
+     <div className="absolute top-14 left-4 md:left-64">
         <Link
           to="/dashboard"
           className="flex items-center gap-2 hover:opacity-70 transition-opacity"
