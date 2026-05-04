@@ -10,7 +10,7 @@ const HomePage = () => {
         
         {/* Adjusted text sizes for small (4xl), medium (5xl), and large (7xl) screens */}
         <h1 className="w-full max-w-4xl my-8 text-center text-4xl sm:text-5xl md:text-7xl font-bold text-[#291334] tracking-tight leading-tight">
-          Create people profiles you {""}
+          Create people profiles you {" "}
           
           {/* ✅ FIX: Only force the line break on md screens and up. On small phones, it wraps naturally. */}
           <br className="hidden md:block" />
