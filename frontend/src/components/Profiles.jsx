@@ -16,7 +16,9 @@ const Profile = () => {
           navigate("/login");
           return;
         }
-        const res = await fetch("http://localhost:5005/api/people", {
+       
+        // ✅ Updated to Render URL
+        const res = await fetch("https://people-we-know.onrender.com/api/people", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {
@@ -39,7 +41,9 @@ const Profile = () => {
     if (!window.confirm("Are you sure you want to delete this person?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5005/api/people/${id}`, {
+      
+      // ✅ Updated to Render URL
+      const res = await fetch(`https://people-we-know.onrender.com/api/people/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -70,7 +74,6 @@ const Profile = () => {
         backgroundSize: "100% 32px",
       }}
     >
-      {/* ✅ 1. Changed gap-8 to gap-y-16 gap-x-8 to stop photos from touching cards below */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-16 gap-x-8 max-w-7xl mx-auto pt-4">
         {people.length === 0 ? (
           <p className="text-center text-2xl text-gray-500 col-span-full mt-20">
@@ -86,7 +89,8 @@ const Profile = () => {
               <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full border-2  border-black bg-white z-10 overflow-hidden flex items-center justify-center">
                 {person.photo ? (
                   <img
-                    src={`http://localhost:5005/${person.photo.replace(/\\/g, "/")}`}
+                    // ✅ Updated to Render URL
+                    src={`https://people-we-know.onrender.com/${person.photo.replace(/\\/g, "/")}`}
                     alt={person.name}
                     className="w-full h-full object-cover"
                   />
@@ -95,7 +99,6 @@ const Profile = () => {
                 )}
               </div>
 
-              {/* ✅ 2. Changed justify-end to justify-center and added gap-2 */}
               <div className="flex items-center justify-center gap-2 mb-4">
                 <h2 className="text-xl font-bold text-gray-800 leading-tight">
                   {person.name}
@@ -105,10 +108,8 @@ const Profile = () => {
                 </span>
               </div>
 
-              {/* Divider */}
               <div className="border-b-2 border-dashed border-gray-400 mb-4"></div>
 
-              {/* Details */}
               <div className="flex-grow space-y-2 text-gray-700 font-medium">
                 <p>
                   place :{" "}
@@ -130,14 +131,12 @@ const Profile = () => {
                 </p>
               </div>
 
-              {/* Bottom Doodles */}
               <div className="flex justify-center gap-3 mt-6 text-gray-400 select-none">
                 <span>✨</span>
                 <span>🎈</span>
                 <span>✨</span>
               </div>
 
-              {/* Hover Buttons */}
               <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 rounded-lg p-1 shadow-sm">
                 <Link
                   to={`/update/${person._id}`}
